@@ -30,7 +30,7 @@ jobs:
 
       - name: Build compliance checker
         working-directory: ./scripts
-        run: go build -o compliance-check main.go
+        run: go build -o compliance-check compliance-checker.go
 
       - name: Run compliance analysis
         env:

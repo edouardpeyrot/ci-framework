@@ -8,6 +8,5 @@ RUN go mod init example.com/hello && go mod tidy && go build -o server main.go
 FROM alpine:3.20
 WORKDIR /app
 COPY --from=builder /app/server .
-COPY frontend ./frontend
 EXPOSE 8080
 CMD ["./server"]

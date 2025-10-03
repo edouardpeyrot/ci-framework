@@ -36,7 +36,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::977419214180:role/gh-ecr-power-user
-          aws-region: eu-west-3   # adapte à ta région
+          aws-region: eu-west-3
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -73,7 +73,17 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::977419214180:role/gh-ecr-power-user
-          aws-region: eu-north-1   # adapte à ta région
+          aws-region: eu-west-3
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Configure AWS credentials from OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::977419214180:role/gh-ecr-power-user
+          aws-region: eu-west-3
 
       - name: Login to Amazon ECR
         id: login-ecr

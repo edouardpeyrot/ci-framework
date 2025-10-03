@@ -58,7 +58,6 @@ jobs:
   build-frontend:
     name: Build Frontend Docker Image
     runs-on: ubuntu-latest
-    needs: [ frontend-security, compliance-check ]
     steps:
       - uses: actions/checkout@v4
 

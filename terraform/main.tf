@@ -18,9 +18,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "epe-terraform-state-bucket"
-    key            = "prod/terraform.tfstate"
-    region         = "eu-west-3"
+    bucket = "epe-terraform-state-bucket"
+    key    = "prod/terraform.tfstate"
+    region = "eu-west-3"
   }
 }
 
@@ -96,11 +96,11 @@ module "aws_infrastructure" {
   source = "./modules/aws"
   count  = var.cloud_provider == "aws" ? 1 : 0
 
-  environment         = var.environment
-  project_name        = var.project_name
-  kubernetes_version  = var.kubernetes_version
-  node_count          = var.node_count
-  node_instance_type  = var.node_vm_size["aws"]
+  environment        = var.environment
+  project_name       = var.project_name
+  kubernetes_version = var.kubernetes_version
+  node_count         = var.node_count
+  node_instance_type = var.node_vm_size["aws"]
 }
 
 provider "aws" {

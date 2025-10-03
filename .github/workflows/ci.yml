@@ -12,115 +12,81 @@ env:
   TERRAFORM_VERSION: '1.5.7'
   KUBERNETES_VERSION: '1.33'
   CLOUD_PROVIDER: 'aws'  # azure | gcp | aws
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
 
 jobs:
-  # ============================================
-  # CONFORMITÉ & SÉCURITÉ
-  # ============================================
-  compliance-check:
-    name: LLM Compliance Analysis (ISO 27001/RGPD)
+
+  terraform-plan:
+    name: Terraform Plan (${{ matrix.cloud }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cloud: [aws]  # Ajouter azure, gcp selon besoins
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
-          go-version: "1.22"
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
-      - name: Build compliance checker
-        working-directory: ./scripts
-        run: go build -o compliance-check compliance-checker.go
-
-      - name: Run compliance analysis
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - name: Terraform Format Check
         run: |
-          ./scripts/compliance-check \
-            --input ./infrastructure/ \
-            --policies "ISO27001,GDPR" \
-            --output compliance-report.json
+          cd terraform
+          terraform fmt -check -recursive
 
-      - name: Upload compliance report
-        uses: actions/upload-artifact@v4
-        with:
-          name: compliance-report
-          path: compliance-report.json
-
-  # ============================================
-  # BACKEND GO - TESTS & SÉCURITÉ
-  # ============================================
-  backend-lint-test:
-    name: Backend Go - Lint & Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
-      - name: Cache Go modules
-        uses: actions/cache@v3
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-
-      - name: Go Lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: latest
-          args: --timeout=5m
-          working-directory: backend
-
-      - name: Go Tests
+      - name: Terraform Init
         run: |
-          cd backend
-          go test -v -race -coverprofile=coverage.out ./...
-          go tool cover -html=coverage.out -o coverage.html
+          cd terraform
+          terraform init
 
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-coverage
-          path: backend/coverage.html
+      - name: Terraform Validate
+        run: |
+          cd terraform
+          terraform validate
 
-  backend-security:
-    name: Backend Go - Analyse Sécurité
-    runs-on: ubuntu-latest
-    needs: [backend-lint-test]
-    steps:
-      - uses: actions/checkout@v4
+      - name: Terraform Plan
+        run: |
+          cd terraform
+          terraform plan \
+            -var="cloud_provider=${{ matrix.cloud }}" \
+            -out=tfplan-${{ matrix.cloud }}
 
-      - name: Snyk Security Scan
-        uses: snyk/actions/golang@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high --file=backend/go.mod
-
-      - name: Trivy Vulnerability Scanner
+      - name: Trivy Terraform Scan
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: './backend'
+          scan-type: 'config'
+          scan-ref: './terraform'
           format: 'sarif'
-          output: 'trivy-backend-results.sarif'
+          output: 'trivy-terraform-${{ matrix.cloud }}.sarif'
 
-      - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-backend-results.sarif'
-
-  # ============================================
-  # FRONTEND JS - TESTS & SÉCURITÉ
-  # ============================================
-  frontend-lint-test:
-    name: Frontend JS - Lint & Tests
+  terraform-apply:
+    name: Terraform Apply
     runs-on: ubuntu-latest
+    needs: [terraform-plan, build-backend, build-frontend]
+    if: github.ref == 'refs/heads/main'
+    environment: production
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform Init
+        run: |
+          cd terraform
+          terraform init
+
+      - name: Terraform Apply
+        run: |
+          cd terraform
+          terraform apply -auto-approve \
+            -var="cloud_provider=${{ env.CLOUD_PROVIDER }}"

@@ -1,0 +1,126 @@
+name: Multi-Cloud CI/CD Pipeline - Go Backend & JS Frontend
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  GO_VERSION: '1.21'
+  NODE_VERSION: '20'
+  TERRAFORM_VERSION: '1.5.7'
+  KUBERNETES_VERSION: '1.33'
+  CLOUD_PROVIDER: 'aws'  # azure | gcp | aws
+
+jobs:
+  # ============================================
+  # CONFORMITÉ & SÉCURITÉ
+  # ============================================
+  compliance-check:
+    name: Vérification Conformité (RGPD, ISO27001)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Analyse de conformité avec LLM
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Installation des dépendances LLM
+        run: |
+          pip install openai anthropic langchain
+
+      - name: Scan de conformité RGPD/ISO27001
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python scripts/compliance-checker.py \
+            --framework RGPD,ISO27001 \
+            --source-dir . \
+            --report-output compliance-report.json
+
+      - name: Upload rapport de conformité
+        uses: actions/upload-artifact@v4
+        with:
+          name: compliance-report
+          path: compliance-report.json
+
+  # ============================================
+  # BACKEND GO - TESTS & SÉCURITÉ
+  # ============================================
+  backend-lint-test:
+    name: Backend Go - Lint & Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+
+      - name: Go Lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --timeout=5m
+          working-directory: backend
+
+      - name: Go Tests
+        run: |
+          cd backend
+          go test -v -race -coverprofile=coverage.out ./...
+          go tool cover -html=coverage.out -o coverage.html
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage.html
+
+  backend-security:
+    name: Backend Go - Analyse Sécurité
+    runs-on: ubuntu-latest
+    needs: [backend-lint-test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Snyk Security Scan
+        uses: snyk/actions/golang@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high --file=backend/go.mod
+
+      - name: Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './backend'
+          format: 'sarif'
+          output: 'trivy-backend-results.sarif'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-backend-results.sarif'
+
+  # ============================================
+  # FRONTEND JS - TESTS & SÉCURITÉ
+  # ============================================
+  frontend-lint-test:
+    name: Frontend JS - Lint & Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4

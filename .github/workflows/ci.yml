@@ -58,7 +58,7 @@ jobs:
         with:
           image-ref: ${{ secrets.REGISTRY_URL }}/backend:${{ github.sha }}
           format: 'sarif'
-          output: 'trivy-image-backend.sarif '
+          output: 'trivy-image-backend.sarif'
 
   build-frontend:
     name: Build Frontend Docker Image

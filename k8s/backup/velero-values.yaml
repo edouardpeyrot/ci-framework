@@ -13,14 +13,14 @@ data:
         provider: aws
         bucket: ${BACKUP_BUCKET}
         config:
-          region: eu-west-1
-          kmsKeyId: ${KMS_KEY_ID}
+          region: eu-west-3
+    
       
       volumeSnapshotLocation:
         name: default
         provider: aws
         config:
-          region: eu-west-1
+          region: eu-west-3
       
       # Backup retention
       defaultBackupTTL: 720h  # 30 days

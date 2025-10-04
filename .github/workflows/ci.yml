@@ -1,0 +1,73 @@
+name: AWS CI/CD Pipeline - Go Backend & JS Frontend
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  GO_VERSION: '1.21'
+  NODE_VERSION: '20'
+  TERRAFORM_VERSION: '1.5.7'
+  KUBERNETES_VERSION: '1.33'
+  CLOUD_PROVIDER: 'aws'  # azure | gcp | aws
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  build:
+    uses: ./.github/workflows/ci-build.yml
+    secrets:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
+      REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
+
+  infra:
+    uses: ./.github/workflows/ci-infra.yml
+    needs: [build]
+    secrets:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
+
+  deploy:
+    uses: ./.github/workflows/ci-deploy.yml
+    needs: [infra]
+    secrets:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
+      BACKUP_BUCKET: ${{ secrets.BACKUP_BUCKET }}
+
+  terraform-destroy:
+    name: Terraform destroy
+    runs-on: ubuntu-latest
+    needs: [ deploy ]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Terraform Init
+        run: |
+          cd terraform
+          terraform init
+
+      - name: Terraform Destroy
+        run: |
+          cd terraform
+          terraform destroy -auto-approve \
+            -var="cloud_provider=${{ env.CLOUD_PROVIDER }}"

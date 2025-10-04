@@ -203,7 +203,7 @@ jobs:
   terraform-destroy:
     name: Terraform destroy
     runs-on: ubuntu-latest
-    needs: [ terraform-apply, build-backend, build-frontend ]
+    needs: [ kube ]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     environment: production
     steps:

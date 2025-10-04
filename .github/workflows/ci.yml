@@ -258,6 +258,12 @@ jobs:
           name: kubeconfig
           path: ~/.kube
 
+      - name: Configure AWS credentials from OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Deploy Prometheus Stack
         working-directory: ./helm
         run: |
@@ -281,6 +287,12 @@ jobs:
         with:
           name: kubeconfig
           path: ~/.kube
+
+      - name: Configure AWS credentials from OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy Vault
         working-directory: ./helm
@@ -306,6 +318,12 @@ jobs:
           name: kubeconfig
           path: ~/.kube
 
+      - name: Configure AWS credentials from OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Deploy Velero
         working-directory: ./helm
         run: |
@@ -329,6 +347,12 @@ jobs:
         with:
           name: kubeconfig
           path: ~/.kube
+
+      - name: Configure AWS credentials from OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy ingress-nginx
         working-directory: ./helm

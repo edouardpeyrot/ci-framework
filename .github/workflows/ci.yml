@@ -210,6 +210,7 @@ jobs:
           helm repo add vmware-tanzu https://vmware-tanzu.github.io/helm-charts
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm repo update
+          helm upgrade --install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring -f helm/values-prometheus.yaml 
           helm upgrade --install vault hashicorp/vault -n vault -f vault/vault-values.yaml
           helm upgrade --install keycloak codecentric/keycloak -n auth -f keycloak/keycloak-values.yaml
           helm upgrade --install velero vmware-tanzu/velero -n velero -f backup/velero-values.yaml --set configuration.backupStorageLocation[0].bucket=${{ secrets.BACKUP_BUCKET }}

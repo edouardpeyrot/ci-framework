@@ -23,3 +23,12 @@ metadata:
   labels:
     name: monitoring
     pod-security.kubernetes.io/enforce: baseline
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: velero
+  labels:
+    name: velero
+    pod-security.kubernetes.io/enforce: baseline

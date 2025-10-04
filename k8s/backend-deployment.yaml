@@ -166,7 +166,7 @@ metadata:
   name: backend-service
   namespace: production
   labels:
-    app: backendƒ
+    app: backend
 spec:
   type: ClusterIP
   selector:

@@ -210,7 +210,7 @@ jobs:
           helm repo add codecentric https://codecentric.github.io/helm-charts
           helm upgrade --install keycloak codecentric/keycloak -n auth -f keycloak/keycloak-values.yaml
           helm repo add vmware-tanzu https://vmware-tanzu.github.io/helm-charts
-          helm upgrade --install velero vmware-tanzu/velero -n velero -f backup/velero-values.yaml --set configuration.backupStorageLocation.bucket=[${{ secrets.BACKUP_BUCKET }}]
+          helm upgrade --install velero vmware-tanzu/velero -n velero -f backup/velero-values.yaml --set configuration.backupStorageLocation[0].bucket=${{ secrets.BACKUP_BUCKET }}
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx -n ingress --create-namespace
           helm repo update

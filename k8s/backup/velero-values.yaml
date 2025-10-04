@@ -1,80 +1,73 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: velero-helm-values
-  namespace: velero
-data:
-  values.yaml: |
-    configuration:
+configuration:
+  provider: aws
+
+  backupStorageLocation:
+    - name: default
       provider: aws
-    
-      backupStorageLocation:
-        - name: default
-          provider: aws
-          bucket: ${BACKUP_BUCKET}
-          config:
-            region: eu-west-3
-    
-    
-      volumeSnapshotLocation:
-        - name: default
-          provider: aws
-          config:
-            region: eu-west-3
-    
-      # Backup retention
-      defaultBackupTTL: 720h  # 30 days
-    
-    # Credentials
-    credentials:
-      useSecret: true
-      existingSecret: velero-aws-credentials
-    
-    # Schedule automatic backups
-    schedules:
-      daily:
-        schedule: "0 2 * * *"
-        template:
-          ttl: 720h
-          includedNamespaces:
-            - production
-            - monitoring
-            - vault
-          excludedResources:
-            - events
-            - events.events.k8s.io
-    
-      hourly:
-        schedule: "0 * * * *"
-        template:
-          ttl: 168h  # 7 days
-          includedNamespaces:
-            - production
-          labelSelector:
-            matchLabels:
-              backup: hourly
-    
-    # Resources
-    resources:
-      requests:
-        cpu: 500m
-        memory: 512Mi
-      limits:
-        cpu: 1000m
-        memory: 1Gi
-    
-    # Metrics
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
-        labels:
-          monitoring: enabled
-    
-    # Init containers for plugins
-    initContainers:
-      - name: velero-plugin-for-aws
-        image: velero/velero-plugin-for-aws:v1.8.0
-        volumeMounts:
-          - mountPath: /target
-            name: plugins
+      bucket: ${BACKUP_BUCKET}
+      config:
+        region: eu-west-3
+
+
+  volumeSnapshotLocation:
+    - name: default
+      provider: aws
+      config:
+        region: eu-west-3
+
+  # Backup retention
+  defaultBackupTTL: 720h  # 30 days
+
+# Credentials
+credentials:
+  useSecret: true
+  existingSecret: velero-aws-credentials
+
+# Schedule automatic backups
+schedules:
+  daily:
+    schedule: "0 2 * * *"
+    template:
+      ttl: 720h
+      includedNamespaces:
+        - production
+        - monitoring
+        - vault
+      excludedResources:
+        - events
+        - events.events.k8s.io
+
+  hourly:
+    schedule: "0 * * * *"
+    template:
+      ttl: 168h  # 7 days
+      includedNamespaces:
+        - production
+      labelSelector:
+        matchLabels:
+          backup: hourly
+
+# Resources
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+# Metrics
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    labels:
+      monitoring: enabled
+
+# Init containers for plugins
+initContainers:
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.8.0
+    volumeMounts:
+      - mountPath: /target
+        name: plugins

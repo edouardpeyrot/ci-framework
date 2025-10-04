@@ -238,6 +238,12 @@ jobs:
         working-directory: ./k8s
         run: kubectl apply -f namespaces.yaml
 
+      - name: Upload kubeconfig
+        uses: actions/upload-artifact@v4
+        with:
+          name: kubeconfig
+          path: ~/.kube/config
+
   deploy-monitoring:
     name: Deploy Monitoring Stack
     runs-on: ubuntu-latest
@@ -245,6 +251,13 @@ jobs:
     concurrency: helm-deploy
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download kubeconfig
+        uses: actions/download-artifact@v4
+        with:
+          name: kubeconfig
+          path: ~/.kube
+
       - name: Deploy Prometheus Stack
         working-directory: ./helm
         run: |
@@ -262,6 +275,13 @@ jobs:
     concurrency: helm-deploy
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download kubeconfig
+        uses: actions/download-artifact@v4
+        with:
+          name: kubeconfig
+          path: ~/.kube
+
       - name: Deploy Vault
         working-directory: ./helm
         run: |
@@ -279,6 +299,13 @@ jobs:
     concurrency: helm-deploy
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download kubeconfig
+        uses: actions/download-artifact@v4
+        with:
+          name: kubeconfig
+          path: ~/.kube
+
       - name: Deploy Velero
         working-directory: ./helm
         run: |
@@ -297,6 +324,12 @@ jobs:
     concurrency: helm-deploy
     steps:
       - uses: actions/checkout@v4
+      - name: Download kubeconfig
+        uses: actions/download-artifact@v4
+        with:
+          name: kubeconfig
+          path: ~/.kube
+
       - name: Deploy ingress-nginx
         working-directory: ./helm
         run: |

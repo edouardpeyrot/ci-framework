@@ -9,11 +9,11 @@ data:
       provider: aws
     
       backupStorageLocation:
-        name: default
-        provider: aws
-        bucket: ${BACKUP_BUCKET}
-        config:
-          region: eu-west-3
+        - name: default
+          provider: aws
+          bucket: ${BACKUP_BUCKET}
+          config:
+            region: eu-west-3
     
     
       volumeSnapshotLocation:

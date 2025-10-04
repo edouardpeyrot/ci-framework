@@ -10,16 +10,17 @@ data:
     
       backupStorageLocation:
         - name: default
+          provider: aws
           bucket: ${BACKUP_BUCKET}
           config:
             region: eu-west-3
     
     
       volumeSnapshotLocation:
-        name: default
-        provider: aws
-        config:
-          region: eu-west-3
+        - name: default
+          provider: aws
+          config:
+            region: eu-west-3
     
       # Backup retention
       defaultBackupTTL: 720h  # 30 days

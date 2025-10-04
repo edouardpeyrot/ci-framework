@@ -1,4 +1,3 @@
-# k8s/vault/vault-policy.hcl
 # Policy pour backend
 path "secret/data/backend/*" {
   capabilities = ["read"]

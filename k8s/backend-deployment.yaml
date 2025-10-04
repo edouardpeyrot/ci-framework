@@ -60,9 +60,9 @@ spec:
                   - key: topology.kubernetes.io/zone
                     operator: In
                     values:
-                      - eu-west-1a
-                      - eu-west-1b
-                      - eu-west-1c
+                      - eu-west-3a
+                      - eu-west-3b
+                      - eu-west-3c
       
       # Topology spread pour équilibrer entre AZs
       topologySpreadConstraints:
@@ -166,7 +166,7 @@ metadata:
   name: backend-service
   namespace: production
   labels:
-    app: backend
+    app: backendƒ
 spec:
   type: ClusterIP
   selector:

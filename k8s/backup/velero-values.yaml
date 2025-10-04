@@ -1,5 +1,5 @@
 configuration:
-  provider: aws
+
 
   backupStorageLocation:
     - name: default

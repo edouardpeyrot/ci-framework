@@ -18,11 +18,10 @@ Velero : sauvegarde et restauration du cluster.
 
 GitHub Actions : automatisation du pipeline CI/CD, de la conformité et du déploiement
 
+## Resultat
 
-## Résultat
-
-Le prototype n’a pas été poussé jusqu’au déploiement complet, par manque d'interêt de mobiliser du temps et des coûts opérationnels.
-Il a servi à valider l’architecture, les interactions entre composants et la cohérence d’une approche DevSecOps intégrée.
+Le prototype n’a pas été poussé jusqu’au déploiement complet, le maintien opérationnel n’ayant pas présenté d’intérêt suffisant au regard du temps et des coûts à engager.
+Il a néanmoins permis de valider l’architecture, les interactions entre composants et la cohérence d’une approche DevSecOps intégrée.
 Le projet reste ouvert à reprise comme démonstrateur technique ou socle de référence.
 
 ## Intérêt

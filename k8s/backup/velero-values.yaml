@@ -7,7 +7,7 @@ data:
   values.yaml: |
     configuration:
       provider: aws
-      
+    
       backupStorageLocation:
         name: default
         provider: aws
@@ -15,13 +15,13 @@ data:
         config:
           region: eu-west-3
     
-      
+    
       volumeSnapshotLocation:
         name: default
         provider: aws
         config:
           region: eu-west-3
-      
+    
       # Backup retention
       defaultBackupTTL: 720h  # 30 days
     
@@ -43,7 +43,7 @@ data:
           excludedResources:
             - events
             - events.events.k8s.io
-      
+    
       hourly:
         schedule: "0 * * * *"
         template:

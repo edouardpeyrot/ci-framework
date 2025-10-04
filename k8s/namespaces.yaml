@@ -32,3 +32,13 @@ metadata:
   labels:
     name: velero
     pod-security.kubernetes.io/enforce: baseline
+
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: auth
+  labels:
+    name: auth
+    pod-security.kubernetes.io/enforce: baseline

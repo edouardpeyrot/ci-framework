@@ -228,9 +228,6 @@ jobs:
     needs: [kube]
     steps:
       - uses: actions/checkout@v4
-
-
-
       - name: Check App
         run: |
           set -e

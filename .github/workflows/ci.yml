@@ -241,7 +241,7 @@ jobs:
   deploy-monitoring:
     name: Deploy Monitoring Stack
     runs-on: ubuntu-latest
-    needs: [kube]
+    needs: [kube-init]
     concurrency: helm-deploy
     steps:
       - uses: actions/checkout@v4
@@ -258,7 +258,7 @@ jobs:
   deploy-vault:
     name: Deploy Vault
     runs-on: ubuntu-latest
-    needs: [deploy-monitoring]
+    needs: [kube-init]
     concurrency: helm-deploy
     steps:
       - uses: actions/checkout@v4
@@ -275,7 +275,7 @@ jobs:
   deploy-velero:
     name: Deploy Velero
     runs-on: ubuntu-latest
-    needs: [deploy-vault]
+    needs: [kube-init]
     concurrency: helm-deploy
     steps:
       - uses: actions/checkout@v4
@@ -293,7 +293,7 @@ jobs:
   deploy-ingress:
     name: Deploy Ingress Controller
     runs-on: ubuntu-latest
-    needs: [deploy-velero]
+    needs: [kube-init]
     concurrency: helm-deploy
     steps:
       - uses: actions/checkout@v4

@@ -322,7 +322,7 @@ jobs:
   check:
     name: Post deployment checks
     runs-on: ubuntu-latest
-    needs: [kube]
+    needs: [kube-deploy]
     steps:
       - uses: actions/checkout@v4
       - name: Check App

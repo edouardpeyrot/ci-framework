@@ -18,6 +18,9 @@ permissions:
   contents: read
 
 jobs:
+  test:
+    uses: ./.github/workflows/ci-test.yml
+
   build:
     uses: ./.github/workflows/ci-build.yml
 

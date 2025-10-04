@@ -1,6 +1,8 @@
 name: Provision infrastructure
 on:
   workflow_call:
+
+
 jobs:
   terraform-plan:
     name: Terraform Plan (${{ matrix.cloud }})

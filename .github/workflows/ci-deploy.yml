@@ -1,6 +1,7 @@
 name: Deploy on AWS
 on:
   workflow_call:
+
 jobs:
   kube-init:
     name: Initialize Kubernetes Cluster

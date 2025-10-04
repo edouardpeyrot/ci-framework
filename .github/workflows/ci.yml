@@ -20,17 +20,28 @@ permissions:
 jobs:
   test:
     uses: ./.github/workflows/ci-test.yml
+    secrets:
 
   build:
     uses: ./.github/workflows/ci-build.yml
+    secrets:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
 
   infra:
     uses: ./.github/workflows/ci-infra.yml
     needs: [build]
+    secrets:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
 
   deploy:
     uses: ./.github/workflows/ci-deploy.yml
     needs: [infra]
+    secrets:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
+      BACKUP_BUCKET: ${{ secrets.BACKUP_BUCKET }}
 
   terraform-destroy:
     name: Terraform destroy

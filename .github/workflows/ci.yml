@@ -248,10 +248,10 @@ jobs:
           helm repo add vmware-tanzu https://vmware-tanzu.github.io/helm-charts
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm repo update
-          helm upgrade --install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring -f prometheus/prometheus-values.yaml 
-          helm upgrade --install vault hashicorp/vault -n vault -f vault/vault-values.yaml
-          helm upgrade --install velero vmware-tanzu/velero -n velero -f velero/velero-values.yaml --set configuration.backupStorageLocation[0].bucket=${{ secrets.BACKUP_BUCKET }}
-          helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx -n ingress --create-namespace
+          helm upgrade --install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring -f prometheus/prometheus-values.yaml  --atomic --wait --timeout 10m
+          helm upgrade --install vault hashicorp/vault -n vault -f vault/vault-values.yaml --atomic --wait --timeout 10m
+          helm upgrade --install velero vmware-tanzu/velero -n velero -f velero/velero-values.yaml --set configuration.backupStorageLocation[0].bucket=${{ secrets.BACKUP_BUCKET }} --atomic --wait --timeout 10m
+          helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx -n ingress --create-namespace --atomic --wait --timeout 10m
 
       - name: Apply manifests
         working-directory: ./k8s

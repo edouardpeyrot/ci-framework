@@ -1,0 +1,7 @@
+# k8s/vault/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vault
+  labels:
+    name: vault

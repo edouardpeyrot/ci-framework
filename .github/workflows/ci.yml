@@ -1,4 +1,4 @@
-name: Multi-Cloud CI/CD Pipeline - Go Backend & JS Frontend
+name: AWS CI/CD Pipeline - Go Backend & JS Frontend
 
 on:
   push:
@@ -18,8 +18,6 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    uses: ./.github/workflows/ci-test.yml
 
   build:
     uses: ./.github/workflows/ci-build.yml

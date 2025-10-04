@@ -193,7 +193,7 @@ jobs:
 
       - name: Apply manifests
         working-directory: ./k8s
-        run: kubectl apply -f .
+        run: kubectl apply -f -R .
 
       - name: Verify deployment
         run: kubectl get all

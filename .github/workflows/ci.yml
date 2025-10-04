@@ -26,6 +26,7 @@ jobs:
     secrets:
       AWS_REGION: ${{ secrets.AWS_REGION }}
       AWS_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
+      REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
 
   infra:
     uses: ./.github/workflows/ci-infra.yml

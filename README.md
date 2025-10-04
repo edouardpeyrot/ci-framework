@@ -21,7 +21,7 @@ GitHub Actions : automatisation du pipeline CI/CD, de la conformité et du dépl
 
 ## Résultat
 
-Le prototype n’a pas été poussé jusqu’au déploiement complet.
+Le prototype n’a pas été poussé jusqu’au déploiement complet, par manque d'interêt de mobiliser du temps et des coûts opérationnels.
 Il a servi à valider l’architecture, les interactions entre composants et la cohérence d’une approche DevSecOps intégrée.
 Le projet reste ouvert à reprise comme démonstrateur technique ou socle de référence.
 

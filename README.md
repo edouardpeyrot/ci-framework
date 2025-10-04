@@ -16,15 +16,18 @@ Prometheus / Grafana : supervision et métriques.
 
 Velero : sauvegarde et restauration du cluster.
 
-GitHub Actions : automatisation du pipeline CI/CD, de la conformité et du déploiement.
+GitHub Actions : automatisation du pipeline CI/CD, de la conformité et du déploiement
 
-## État du projet
-L’infrastructure a été déployée avec succès sur AWS dans le cadre d’une phase d’expérimentation.
 
-Le projet a été volontairement mis en pause : la finalité de l’infrastructure ne justifiait pas son maintien opérationnel.
-Il reste néanmoins une base démonstrative de pratiques IaC, sécurisation et orchestration multi-composants.
-Intérêt
+## Résultat
 
-Même sans exécution active du pipeline, le dépôt illustre :
-- Une approche modulaire de l’automatisation cloud.
-- La structuration d’un projet DevSecOps complet, reproductible et documenté.
+Le prototype n’a pas été poussé jusqu’au déploiement complet.
+Il a servi à valider l’architecture, les interactions entre composants et la cohérence d’une approche DevSecOps intégrée.
+Le projet reste ouvert à reprise comme démonstrateur technique ou socle de référence.
+
+## Intérêt
+
+Ce travail illustre la démarche d’un déploiement cloud industriel :
+	•	conception orientée sécurité et observabilité,
+	•	automatisation IaC maîtrisée,
+	•	documentation et gouvernance dès la phase de prototypage.

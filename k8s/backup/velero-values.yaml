@@ -10,7 +10,6 @@ data:
     
       backupStorageLocation:
         - name: default
-          provider: aws
           bucket: ${BACKUP_BUCKET}
           config:
             region: eu-west-3

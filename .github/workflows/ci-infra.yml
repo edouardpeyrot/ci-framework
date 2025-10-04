@@ -1,9 +1,12 @@
 name: Provision infrastructure
 on:
   workflow_call:
-env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
+    secrets:
+      AWS_REGION:
+        required: true
+      AWS_OIDC_ROLE:
+        required: true
+
 
 jobs:
   terraform-plan:
@@ -11,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        cloud: [aws]  # Ajouter azure, gcp selon besoins
+        cloud: [aws]
     steps:
       - uses: actions/checkout@v4
 

@@ -1,10 +1,14 @@
 name: Deploy on AWS
 on:
   workflow_call:
-env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
-  BACKUP_BUCKET: ${{ secrets.BACKUP_BUCKET }}
+    secrets:
+      AWS_REGION:
+        required: true
+      AWS_OIDC_ROLE:
+        required: true
+      BACKUP_BUCKET:
+        required: true
+
 
 jobs:
   kube-init:

@@ -31,7 +31,7 @@ jobs:
       - name: Update kubeconfig
         run: |
           aws eks update-kubeconfig \
-            --region ${{ env.AWS_REGION }}\
+            --region ${{ secrets.AWS_REGION }}\
             --name framework-ci-production-eks \
             --alias framework-ci
 
@@ -243,6 +243,6 @@ jobs:
         run: |
           set -e
           echo "Checking Vault status..."
-          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=vault -n security --timeout=180s
-          kubectl exec -n security deploy/vault -- vault status || { echo "Vault not ready or sealed"; exit 1; }
-          echo "Vault is unsealed and ready."
+          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=vault -n vault --timeout=180s
+          kubectl exec -n vault deploy/vault -- vault status || { echo "Vault not ready or sealed"; exit 1; }
+          echo "Vault is unsealed and ready to use."
